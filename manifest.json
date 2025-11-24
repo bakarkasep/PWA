@@ -1,0 +1,38 @@
+{
+  "name": "C",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "skyblue",
+  "theme_color": "skyblue",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "img/letter_c_PNG10 72x72.png",
+      "type": "image/png",
+      "sizes": "72x72"
+    },
+    {
+      "src": "img/letter_c_PNG10 192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "img/letter_c_PNG10 512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/img/screenshot-desktop.png",
+      "sizes": "1593x1083",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/img/screenshot-mobile.png",
+      "sizes": "455x1016",
+      "type": "image/png"
+    }
+  ]
+}

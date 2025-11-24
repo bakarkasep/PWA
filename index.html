@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Perusahaan C</title>
+    <!-- Ganti Bootstrap dengan CSS offline -->
+    <link href="style.css" rel="stylesheet" />
+    <link rel="manifest" href="manifest.json" />
+  </head>
+  <body>
+    <!--Navbar-->
+    <nav class="navbar navbar-expand-lg bg-dark shadow-sm">
+      <div class="container">
+        <a class="navbar-brand text-white" href="index.html">C</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="index.html"
+                >Home</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#contact">Contact Us</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!--Akhir Navbar-->
+
+    <!--Hero Section-->
+    <section
+      id="home"
+      class="d-flex align-items-center bg-light w-100"
+      style="min-height: 100vh; overflow: hidden"
+    >
+      <div class="container">
+        <div class="row align-items-center">
+          <!-- Kolom teks -->
+          <div class="col-12 col-md-6">
+            <h1 class="display-4 fw-bold">Selamat Datang di Website kami</h1>
+            <p class="lead">Semoga anda betah di Website kami</p>
+          </div>
+
+          <!-- Kolom gambar -->
+          <div class="col-12 col-md-6 text-center">
+            <img
+              src="img/letter_c_PNG10%20512x512.png"
+              class="img-fluid rounded"
+              alt="Gambar C"
+              width="180"
+              height="180"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--Akhir Hero Section-->
+
+    <!--Contact-->
+    <section id="contact" class="py-5 bg-light-subtle">
+      <div class="row text-center">
+        <div class="col-12">
+          <h1>Contact Us</h1>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-4">
+          <form>
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Nama</label>
+              <input type="text" class="form-control" id="exampleInputMadara" />
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"
+                >Email</label
+              >
+              <input
+                type="email"
+                class="form-control"
+                id="exampleFormControlInput1"
+                placeholder="name@example.com"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label"
+                >Pesan</label
+              >
+              <textarea
+                class="form-control"
+                id="exampleFormControlTextarea1"
+                rows="3"
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-dark">Submit</button>
+          </form>
+        </div>
+      </div>
+    </section>
+    <!--Akhir Contact-->
+
+    <!--Footer-->
+    <footer class="bg-dark text-white fw-bold text-center p-3">
+      <p>Copyright © 2025 - developed by Muhammad Hamzah Al Farisi</p>
+    </footer>
+    <!--Akhir Footer-->
+
+    <!-- JavaScript untuk Service Worker -->
+    <script>
+      // Register Service Worker
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker
+            .register("./sw.js")
+            .then(function (registration) {
+              console.log(
+                "Service Worker registered with scope:",
+                registration.scope
+              );
+            })
+            .catch(function (error) {
+              console.log("Service Worker registration failed:", error);
+            });
+        });
+      }
+
+      // JavaScript untuk navbar toggler (menggantikan Bootstrap JS)
+      document.addEventListener("DOMContentLoaded", function () {
+        const navbarToggler = document.querySelector(".navbar-toggler");
+        const navbarCollapse = document.querySelector(".navbar-collapse");
+
+        if (navbarToggler && navbarCollapse) {
+          navbarToggler.addEventListener("click", function () {
+            const isExpanded =
+              navbarToggler.getAttribute("aria-expanded") === "true";
+            navbarToggler.setAttribute("aria-expanded", !isExpanded);
+            navbarCollapse.classList.toggle("show");
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

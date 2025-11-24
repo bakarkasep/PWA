@@ -1,0 +1,102 @@
+// sw.js
+const CACHE_NAME = "perusahaan-c-v2";
+const urlsToCache = [
+  "/",
+  "/index.html",
+  "/style.css",
+  "/manifest.json",
+  "/img/letter_c_PNG10%2072x72.png",
+  "/img/letter_c_PNG10%20192x192.png",
+  "/img/letter_c_PNG10%20512x512.png",
+];
+
+// Install event - cache resources
+self.addEventListener("install", (event) => {
+  console.log("Service Worker: Installed");
+  event.waitUntil(
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        console.log("Service Worker: Caching Files");
+        return cache.addAll(urlsToCache);
+      })
+      .then(() => self.skipWaiting())
+  );
+});
+
+// Activate event - clean up old caches
+self.addEventListener("activate", (event) => {
+  console.log("Service Worker: Activated");
+  event.waitUntil(
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cache) => {
+            if (cache !== CACHE_NAME) {
+              console.log("Service Worker: Clearing Old Cache", cache);
+              return caches.delete(cache);
+            }
+          })
+        );
+      })
+      .then(() => self.clients.claim())
+  );
+});
+
+// Fetch event - serve cached content when offline
+self.addEventListener("fetch", (event) => {
+  // Skip non-GET requests
+  if (event.request.method !== "GET") return;
+
+  // Skip chrome-extension requests
+  if (event.request.url.startsWith("chrome-extension://")) return;
+
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      // Return cached version if exists
+      if (response) {
+        return response;
+      }
+
+      // Otherwise fetch from network
+      return fetch(event.request)
+        .then((response) => {
+          // Check if we received a valid response
+          if (
+            !response ||
+            response.status !== 200 ||
+            response.type !== "basic"
+          ) {
+            return response;
+          }
+
+          // Clone the response
+          const responseToCache = response.clone();
+
+          caches.open(CACHE_NAME).then((cache) => {
+            // Add to cache for future visits
+            cache.put(event.request, responseToCache);
+          });
+
+          return response;
+        })
+        .catch(() => {
+          // If both cache and network fail, show offline page
+          // For navigation requests, return cached index.html
+          if (event.request.mode === "navigate") {
+            return caches.match("/index.html");
+          }
+
+          // For other requests, return generic offline response
+          return new Response("Offline", {
+            status: 503,
+            statusText: "Service Unavailable",
+            headers: new Headers({
+              "Content-Type": "text/plain",
+            }),
+          });
+        });
+    })
+  );
+});
