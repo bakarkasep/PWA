@@ -1,13 +1,13 @@
 // sw.js
-const CACHE_NAME = "perusahaan-c-v2";
+const CACHE_NAME = "perusahaan-c-v3";
 const urlsToCache = [
-  "/",
-  "/index.html",
-  "/style.css",
-  "/manifest.json",
-  "/img/letter_c_PNG10%2072x72.png",
-  "/img/letter_c_PNG10%20192x192.png",
-  "/img/letter_c_PNG10%20512x512.png",
+  "./",
+  "./index.html",
+  "./style.css",
+  "./manifest.json",
+  "./img/letter_c_PNG10%2072x72.png",
+  "./img/letter_c_PNG10%20192x192.png",
+  "./img/letter_c_PNG10%20512x512.png",
 ];
 
 // Install event - cache resources
@@ -18,7 +18,9 @@ self.addEventListener("install", (event) => {
       .open(CACHE_NAME)
       .then((cache) => {
         console.log("Service Worker: Caching Files");
-        return cache.addAll(urlsToCache);
+        return cache.addAll(urlsToCache).catch((error) => {
+          console.log("Cache addAll error:", error);
+        });
       })
       .then(() => self.skipWaiting())
   );
@@ -40,7 +42,10 @@ self.addEventListener("activate", (event) => {
           })
         );
       })
-      .then(() => self.clients.claim())
+      .then(() => {
+        console.log("Service Worker: Claiming clients");
+        return self.clients.claim();
+      })
   );
 });
 
@@ -52,10 +57,15 @@ self.addEventListener("fetch", (event) => {
   // Skip chrome-extension requests
   if (event.request.url.startsWith("chrome-extension://")) return;
 
+  // Skip external URLs (non-same-origin)
+  const url = new URL(event.request.url);
+  if (url.origin !== location.origin) return;
+
   event.respondWith(
     caches.match(event.request).then((response) => {
       // Return cached version if exists
       if (response) {
+        console.log("Service Worker: Serving from cache", event.request.url);
         return response;
       }
 
@@ -76,16 +86,26 @@ self.addEventListener("fetch", (event) => {
 
           caches.open(CACHE_NAME).then((cache) => {
             // Add to cache for future visits
+            console.log(
+              "Service Worker: Caching new resource",
+              event.request.url
+            );
             cache.put(event.request, responseToCache);
           });
 
           return response;
         })
-        .catch(() => {
+        .catch((error) => {
+          console.log("Service Worker: Fetch failed, serving fallback", error);
           // If both cache and network fail, show offline page
           // For navigation requests, return cached index.html
           if (event.request.mode === "navigate") {
-            return caches.match("/index.html");
+            return caches.match("./index.html");
+          }
+
+          // For CSS and JS, return cached versions
+          if (event.request.url.includes(".css")) {
+            return caches.match("./style.css");
           }
 
           // For other requests, return generic offline response

@@ -118,21 +118,47 @@
 
     <!-- JavaScript untuk Service Worker -->
     <script>
-      // Register Service Worker
+      // Register Service Worker dengan scope yang tepat
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", function () {
+          // Gunakan path relatif dan scope yang sama
           navigator.serviceWorker
-            .register("./sw.js")
+            .register("./sw.js", { scope: "./" })
             .then(function (registration) {
               console.log(
-                "Service Worker registered with scope:",
+                "Service Worker registered successfully with scope:",
                 registration.scope
               );
+
+              // Check jika service worker aktif
+              if (registration.active) {
+                console.log("Service Worker is active");
+              }
+
+              // Check jika service worker waiting
+              if (registration.waiting) {
+                console.log("Service Worker is waiting");
+              }
+
+              // Check jika service worker installing
+              if (registration.installing) {
+                console.log("Service Worker is installing");
+              }
             })
             .catch(function (error) {
               console.log("Service Worker registration failed:", error);
             });
         });
+
+        // Listen for controller change
+        navigator.serviceWorker.addEventListener(
+          "controllerchange",
+          function () {
+            console.log("Service Worker controller changed");
+          }
+        );
+      } else {
+        console.log("Service Worker not supported");
       }
 
       // JavaScript untuk navbar toggler (menggantikan Bootstrap JS)
@@ -147,6 +173,19 @@
             navbarToggler.setAttribute("aria-expanded", !isExpanded);
             navbarCollapse.classList.toggle("show");
           });
+        }
+
+        // Test service worker functionality
+        console.log("Page loaded, testing service worker...");
+
+        // Check if current page is controlled by service worker
+        if (navigator.serviceWorker.controller) {
+          console.log(
+            "This page is controlled by:",
+            navigator.serviceWorker.controller.scriptURL
+          );
+        } else {
+          console.log("This page is not controlled by a service worker");
         }
       });
     </script>
